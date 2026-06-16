@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>At the Movies — Prop Marketplace</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--atm-navy:#0d0d1a;--atm-navy2:#1a1a2e;--atm-blue:#1464dc;--atm-blue-light:#2878f0;--atm-blue-glow:#4a9eff;--font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--cp:#111;--cs:#666;--bg:#fff;--bg2:#f5f5f7;--bd:#e5e5e5;--bd2:#d0d0d0;--bd1:#999;--rm:8px;--rl:12px;}
+@media(prefers-color-scheme:dark){:root{--cp:#f0f0f0;--cs:#999;--bg:#1c1c1e;--bg2:#2c2c2e;--bd:#3a3a3c;--bd2:#48484a;--bd1:#636366;}}
+body{font-family:var(--font-sans);color:var(--cp);background:var(--bg2);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:0 0 2rem}
+.hero{background:var(--atm-navy2);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid var(--atm-blue)}
+.hero-left{display:flex;align-items:center;gap:14px}
+.hero-logo{width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1.5px solid var(--atm-blue)}
+.hero-logo img{width:100%;height:100%;object-fit:cover}
+.hero-text h1{font-size:17px;font-weight:500;color:#fff;line-height:1.2}
+.hero-text p{font-size:12px;color:var(--atm-blue-glow);margin-top:2px}
+.hbtns{display:flex;gap:8px;align-items:center}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn-blue{background:var(--atm-blue);color:#fff}.btn-blue:hover:not(:disabled){background:var(--atm-blue-light)}
+.btn-green{background:#0F6E56;color:#fff}.btn-green:hover:not(:disabled){background:#0a5542}
+.btn-red{background:#993C1D;color:#fff}.btn-red:hover:not(:disabled){background:#7a2e14}
+.btn-orange{background:#854F0B;color:#fff}.btn-orange:hover:not(:disabled){background:#6b3f08}
+.btn-dark{background:rgba(255,255,255,0.08);color:#fff;border:0.5px solid rgba(255,255,255,0.2)}.btn-dark:hover{background:rgba(255,255,255,0.15)}
+.btn-light{background:transparent;color:var(--cp);border:0.5px solid var(--bd2)}.btn-light:hover{background:var(--bg2)}
+.btn-ghost{background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;padding:4px;display:inline-flex;align-items:center;border-radius:8px}.btn-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
+.btn-ghost-dark{background:none;border:none;color:var(--cs);cursor:pointer;padding:4px;display:inline-flex;align-items:center;border-radius:8px}.btn-ghost-dark:hover{background:var(--bg2);color:var(--cp)}
+.body-wrap{padding:1.25rem 1rem 0}
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:1.25rem;border:0.5px solid var(--bd)}
+.tab{flex:1;padding:8px;font-size:13px;font-weight:500;border:none;background:transparent;border-radius:8px;cursor:pointer;color:var(--cs);display:flex;align-items:center;justify-content:center;gap:6px}
+.tab.active{background:var(--atm-navy2);color:#fff}.tab.active i{color:var(--atm-blue-glow)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.srch{flex:1;min-width:160px;position:relative}
+.srch i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--cs);pointer-events:none}
+.srch input{width:100%;padding:7px 9px 7px 32px;font-size:13px;border:0.5px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--cp)}
+select.flt{font-size:13px;padding:6px 10px;border:0.5px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--cp);cursor:pointer}
+.stats{display:flex;gap:12px;margin-bottom:1.25rem;flex-wrap:wrap}
+.stat{background:var(--bg);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--cs);border:0.5px solid var(--bd)}
+.stat strong{color:var(--cp);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color 0.15s}
+.card:hover{border-color:var(--atm-blue)}
+.card-thumb{width:100%;height:148px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;overflow:hidden}
+.card-thumb img{width:100%;height:100%;object-fit:cover}
+.badge{font-size:11px;font-weight:500;padding:3px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:3px}
+.b-avail{background:#E1F5EE;color:#0F6E56}.b-pend{background:#FAEEDA;color:#854F0B}.b-claimed{background:#FAECE7;color:#993C1D}.b-wait{background:#EEF0FF;color:#3730a3}
+.abs-badge{position:absolute;top:8px;right:8px}
+.card-body{padding:12px}
+.card-name{font-size:14px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-campus{font-size:12px;color:var(--cs);display:flex;align-items:center;gap:3px;margin-bottom:5px}
+.card-desc{font-size:12px;color:var(--cs);line-height:1.5;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
+.chip{font-size:11px;padding:2px 7px;border-radius:8px;background:var(--bg2);color:var(--cs)}
+.chip-blue{font-size:11px;padding:2px 7px;border-radius:8px;background:#e6f0ff;color:#1464dc}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:0.5px solid var(--bd)}
+.card-actions{display:flex;gap:4px;align-items:center}
+.deadline-warn{font-size:11px;color:#854F0B;display:flex;align-items:center;gap:3px}
+.empty-state{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--cs)}
+.empty-state i{font-size:36px;display:block;margin-bottom:10px}
+.loading-state{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--cs)}
+.spinner{width:24px;height:24px;border:2px solid var(--bd);border-top-color:var(--atm-blue);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:50;overflow-y:auto;padding:2rem 1rem;align-items:flex-start;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;width:100%;max-width:560px;overflow:hidden}
+.modal-lg{max-width:640px}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:2px solid var(--atm-blue);background:var(--atm-navy2)}
+.mhead h2{font-size:16px;font-weight:500;color:#fff;display:flex;align-items:center;gap:8px}
+.mhead h2 i{color:var(--atm-blue-glow);font-size:18px}
+.mbody{padding:1.25rem;max-height:72vh;overflow-y:auto}
+.mfoot{padding:1rem 1.25rem;border-top:0.5px solid var(--bd);display:flex;gap:8px;justify-content:flex-end}
+.fg{margin-bottom:1rem}
+.fl{font-size:13px;font-weight:500;display:block;margin-bottom:5px;color:var(--cp)}
+.fl span{font-weight:400;color:var(--cs)}
+.fc{width:100%;padding:8px 10px;font-size:14px;border:0.5px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--cp)}
+.fc:focus{outline:none;border-color:var(--atm-blue)}
+textarea.fc{resize:vertical;line-height:1.5}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upload-zone{border:0.5px dashed var(--bd2);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;color:var(--cs);font-size:13px}
+.upload-zone:hover{background:var(--bg2)}
+.upload-zone i{font-size:24px;display:block;margin-bottom:5px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:8px}
+.photo-thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-thumb .rm{position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);border:none;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:10px;padding:0}
+.det-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin-bottom:1rem}
+.det-photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:0.5px solid var(--bd)}
+.det-photos img:hover{border-color:var(--atm-blue)}
+.det-hero{width:100%;height:200px;background:var(--bg2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:72px;margin-bottom:8px;overflow:hidden}
+.det-hero img{width:100%;height:100%;object-fit:cover}
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.det-cell{background:var(--bg2);border-radius:8px;padding:8px 12px}
+.det-cell label{font-size:11px;color:var(--cs);display:block;margin-bottom:2px}
+.det-cell span{font-size:13px;font-weight:500}
+.section-note{background:var(--bg2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--cs);margin-bottom:1rem;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.request-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:10px}
+.request-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.request-card-name{font-size:14px;font-weight:500}
+.request-card-campus{font-size:12px;color:var(--cs)}
+.request-card-actions{display:flex;gap:6px;margin-top:10px}
+.request-detail{font-size:12px;color:var(--cs);margin-bottom:3px;display:flex;gap:6px}
+.request-detail strong{color:var(--cp);min-width:60px}
+.waitlist-count{font-size:12px;color:#3730a3;background:#EEF0FF;padding:3px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:4px}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--atm-navy2);border:1px solid var(--atm-blue);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;z-index:200;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.err-banner{background:#fff0f0;border:0.5px solid #ffcccc;border-radius:8px;padding:10px 14px;font-size:13px;color:#cc0000;margin-bottom:1rem;display:none}
+.edit-btn{font-size:12px;color:var(--atm-blue);font-weight:500;background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px}
+.edit-btn:hover{background:#e6f0ff}
+.photo-upload-progress{font-size:12px;color:var(--atm-blue);margin-top:6px;display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-logo"><img src="data:image/jpeg;base64,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" alt="At the Movies"></div>
+    <div class="hero-text"><h1>At the Movies — Prop Marketplace</h1><p>Life.Church · Internal use only</p></div>
+  </div>
+  <div class="hbtns">
+    <button class="btn btn-dark" onclick="loadAll()"><i class="ti ti-refresh"></i> Refresh</button>
+    <button class="btn btn-blue" onclick="openSubmitNew()"><i class="ti ti-plus"></i> List a prop</button>
+  </div>
+</div>
+<div class="body-wrap">
+<div class="err-banner" id="err-banner"></div>
+<div class="tabs">
+  <button class="tab active" id="tab-browse" onclick="switchTab('browse')"><i class="ti ti-layout-grid"></i> Browse all props</button>
+  <button class="tab" id="tab-mine" onclick="switchTab('mine')"><i class="ti ti-building-store"></i> My campus listings</button>
+</div>
+<div id="view-browse">
+  <div class="filters">
+    <div class="srch"><i class="ti ti-search"></i><input type="text" id="q" placeholder="Search by name, theme, campus…" oninput="renderCards()"></div>
+    <select class="flt" id="fStatus" onchange="renderCards()"><option value="">All statuses</option><option>Available</option><option>Pending</option></select>
+    <select class="flt" id="fCampus" onchange="renderCards()"><option value="">All campuses</option></select>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="grid" id="grid"><div class="loading-state"><div class="spinner"></div><p>Loading props…</p></div></div>
+</div>
+<div id="view-mine" style="display:none">
+  <div class="section-note"><i class="ti ti-info-circle" style="font-size:16px;flex-shrink:0;margin-top:1px"></i><span>Select your campus to manage your listings, or <button style="background:none;border:none;color:var(--atm-blue);cursor:pointer;font-size:12px;padding:0;font-weight:500" onclick="openSubmitNew()">list a new prop</button>.</span></div>
+  <div class="filters" style="margin-bottom:1.25rem"><select class="flt" id="myCampusSel" onchange="setMyCampus(this.value)" style="font-size:14px;padding:8px 12px"><option value="">Select my campus…</option></select></div>
+  <div class="stats" id="mine-stats"></div>
+  <div class="grid" id="mine-grid"><div class="empty-state" style="grid-column:1/-1"><i class="ti ti-map-pin"></i><p>Select your campus above</p></div></div>
+</div>
+</div>
+</div>
+
+<!-- Detail Modal -->
+<div class="overlay" id="ov-detail" onclick="maybeClose(event,'ov-detail')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mhead"><h2><i class="ti ti-movie"></i><span id="d-name">Prop details</span></h2><button class="btn-ghost" onclick="closeModal('ov-detail')"><i class="ti ti-x"></i></button></div>
+  <div class="mbody">
+    <div class="det-hero" id="d-hero"></div>
+    <div class="det-photos" id="d-photos"></div>
+    <div style="margin-bottom:1rem"><div style="font-size:11px;color:var(--cs);margin-bottom:4px">Description</div><div id="d-desc" style="font-size:13px;line-height:1.6"></div></div>
+    <div class="det-grid">
+      <div class="det-cell"><label>Campus</label><span id="d-campus"></span></div>
+      <div class="det-cell"><label>Theme</label><span id="d-theme"></span></div>
+      <div class="det-cell"><label>Dimensions</label><span id="d-dims"></span></div>
+      <div class="det-cell"><label>Condition</label><span id="d-cond"></span></div>
+
+      <div class="det-cell"><label>Status</label><span id="d-status"></span></div>
+      <div class="det-cell" style="grid-column:1/-1"><label>Contact</label><span id="d-contact" style="font-size:12px;line-height:1.8"></span></div>
+    </div>
+    <div><div style="font-size:11px;color:var(--cs);margin-bottom:4px">Notes</div><div id="d-notes" style="font-size:13px;line-height:1.6"></div></div>
+  </div>
+  <div class="mfoot">
+    <button class="btn btn-light" onclick="closeModal('ov-detail')">Close</button>
+    <button class="btn btn-orange" id="d-wait-btn" style="display:none" onclick="openWaitlist()"><i class="ti ti-clock"></i> Join waitlist</button>
+    <button class="btn btn-blue" id="d-req-btn" onclick="openRequest()">Request this prop</button>
+  </div>
+</div>
+</div>
+
+<!-- Submit / Edit Modal -->
+<div class="overlay" id="ov-submit" onclick="maybeClose(event,'ov-submit')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mhead"><h2><i class="ti ti-pencil" id="submit-icon"></i><span id="submit-title">List a prop</span></h2><button class="btn-ghost" onclick="closeModal('ov-submit')"><i class="ti ti-x"></i></button></div>
+  <div class="mbody">
+    <div class="fg"><label class="fl">Prop name</label><input type="text" class="fc" id="s-name" placeholder="e.g. Buzz Lightyear display stand"></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fc" id="s-desc" rows="3" placeholder="What it looks like, what it's made of, what makes it special…"></textarea></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Your campus</label><select class="fc" id="s-campus"></select></div>
+      <div class="fg"><label class="fl">Movie theme</label><input type="text" class="fc" id="s-theme" placeholder="e.g. Toy Story"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Dimensions <span>(W × H × D)</span></label><input type="text" class="fc" id="s-dims" placeholder="e.g. 4ft × 6ft × 2ft"></div>
+      <div class="fg"><label class="fl">Condition</label><select class="fc" id="s-cond"><option value="">Select</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Needs repair</option></select></div>
+    </div>
+
+    <div class="fg"><label class="fl">Pick up by <span>(deadline for requesting campus to collect)</span></label><input type="date" class="fc" id="s-pickup"></div>
+    <div class="fg"><label class="fl">Status</label><select class="fc" id="s-status"><option value="Available">Available</option><option value="Pending">Pending</option><option value="Claimed">Claimed</option></select></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Contact name</label><input type="text" class="fc" id="s-cname" placeholder="Jane Smith"></div>
+      <div class="fg"><label class="fl">Contact email</label><input type="email" class="fc" id="s-cemail" placeholder="jsmith@life.church"></div>
+    </div>
+    <div class="fg"><label class="fl">Contact phone</label><input type="tel" class="fc" id="s-cphone" placeholder="(405) 555-0100"></div>
+    <div class="fg">
+      <label class="fl">Photos <span>(up to 10 — JPG or PNG, max 5MB each)</span></label>
+      <div id="photo-grid" class="photo-grid" style="display:none"></div>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('photo-input').click()"><i class="ti ti-photo-up"></i>Click to add photos<div style="font-size:11px;margin-top:3px">You can select multiple at once</div></div>
+      <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
+      <div class="photo-upload-progress" id="upload-progress"><i class="ti ti-loader"></i> Uploading photos…</div>
+    </div>
+    <div class="fg"><label class="fl">Notes <span>(optional)</span></label><textarea class="fc" id="s-notes" rows="2" placeholder="Assembly tips, fragile parts, pickup logistics…"></textarea></div>
+  </div>
+  <div class="mfoot">
+    <button class="btn btn-light" onclick="closeModal('ov-submit')">Cancel</button>
+    <button class="btn btn-blue" id="submit-btn" onclick="saveProp()"><i class="ti ti-check"></i> <span id="submit-btn-label">Submit listing</span></button>
+  </div>
+</div>
+</div>
+
+<!-- Request Modal -->
+<div class="overlay" id="ov-request" onclick="maybeClose(event,'ov-request')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mhead"><h2><i class="ti ti-send"></i> Request this prop</h2><button class="btn-ghost" onclick="closeModal('ov-request')"><i class="ti ti-x"></i></button></div>
+  <div class="mbody">
+    <div class="section-note"><i class="ti ti-mail" style="font-size:16px;flex-shrink:0;margin-top:1px"></i><span>The listing campus will be notified and can approve or decline your request.</span></div>
+    <div class="fg"><label class="fl">Your campus</label><select class="fc" id="r-campus"></select></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Your name</label><input type="text" class="fc" id="r-name" placeholder="Jane Smith"></div>
+      <div class="fg"><label class="fl">Your email</label><input type="email" class="fc" id="r-email" placeholder="jsmith@life.church"></div>
+    </div>
+    <div class="fg"><label class="fl">Your phone</label><input type="tel" class="fc" id="r-phone" placeholder="(405) 555-0100"></div>
+    <div class="fg"><label class="fl">Pick up date</label><input type="date" class="fc" id="r-from"></div>
+    <div class="fg"><label class="fl">Message <span>(optional)</span></label><textarea class="fc" id="r-notes" rows="2" placeholder="Questions, logistics, pickup preferences…"></textarea></div>
+  </div>
+  <div class="mfoot">
+    <button class="btn btn-light" onclick="closeModal('ov-request')">Cancel</button>
+    <button class="btn btn-blue" id="request-btn" onclick="submitRequest()"><i class="ti ti-send"></i> Send request</button>
+  </div>
+</div>
+</div>
+
+<!-- Waitlist Modal -->
+<div class="overlay" id="ov-waitlist" onclick="maybeClose(event,'ov-waitlist')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mhead"><h2><i class="ti ti-clock"></i> Join the waitlist</h2><button class="btn-ghost" onclick="closeModal('ov-waitlist')"><i class="ti ti-x"></i></button></div>
+  <div class="mbody">
+    <div class="section-note"><i class="ti ti-info-circle" style="font-size:16px;flex-shrink:0;margin-top:1px"></i><span>This prop is currently pending. If the request falls through you'll be notified immediately so you can claim it!</span></div>
+    <div class="fg"><label class="fl">Your campus</label><select class="fc" id="w-campus"></select></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Your name</label><input type="text" class="fc" id="w-name" placeholder="Jane Smith"></div>
+      <div class="fg"><label class="fl">Your email</label><input type="email" class="fc" id="w-email" placeholder="jsmith@life.church"></div>
+    </div>
+    <div class="fg"><label class="fl">Your phone</label><input type="tel" class="fc" id="w-phone" placeholder="(405) 555-0100"></div>
+    <div class="fg"><label class="fl">Pick up date</label><input type="date" class="fc" id="w-date"></div>
+    <div class="fg"><label class="fl">Message <span>(optional)</span></label><textarea class="fc" id="w-notes" rows="2" placeholder="Anything the listing campus should know…"></textarea></div>
+  </div>
+  <div class="mfoot">
+    <button class="btn btn-light" onclick="closeModal('ov-waitlist')">Cancel</button>
+    <button class="btn btn-orange" id="waitlist-btn" onclick="submitWaitlist()"><i class="ti ti-clock"></i> Join waitlist</button>
+  </div>
+</div>
+</div>
+
+<!-- Approve/Decline Modal -->
+<div class="overlay" id="ov-approve" onclick="maybeClose(event,'ov-approve')">
+<div class="modal modal-lg" onclick="event.stopPropagation()">
+  <div class="mhead"><h2><i class="ti ti-checks"></i> Manage requests — <span id="ap-prop-name" style="color:var(--atm-blue-glow)"></span></h2><button class="btn-ghost" onclick="closeModal('ov-approve')"><i class="ti ti-x"></i></button></div>
+  <div class="mbody">
+    <div id="ap-content"></div>
+  </div>
+  <div class="mfoot">
+    <button class="btn btn-light" onclick="closeModal('ov-approve')">Close</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_ID='appHJnXK9APKqNydY';
+const AT_TOKEN='patwic1PvgyIoIFaB.db6db77717d30274aa6db6741946d19485dc11430046d96237bcfa8db7ca176a';
+const AT_API=`https://api.airtable.com/v0/${BASE_ID}`;
+const AT_HDR={'Authorization':`Bearer ${AT_TOKEN}`,'Content-Type':'application/json'};
+const CL_CLOUD='dmgaus7fq';
+const CL_KEY='198964937844459';
+const CL_SECRET='OkFrw2lBoH-LmnmUGhLg52-X5gQ';
+const CAMPUSES=["Albany","Amarillo","Austin","Broadway and Britton","Broken Arrow","Catoosa","Colorado Springs","Derby","Des Moines","East Kansas City","East Wichita","Edmond","Fort Smith","Fort Worth","Hendersonville","Jenks","Keller","Lenexa","Mansfield","McKinney","Midtown Tulsa","Midwest City","Moore","Mustang","Norman","North Denver","Northland","NW Oklahoma City","Oklahoma City","Omaha","Overland Park","Owasso","Rio Rancho","Rogers","Shawnee","South Broken Arrow","South Denver","South Oklahoma City","South Tulsa","Springfield","Stillwater","Wellington","West Palm Beach","West Wichita","Yukon"];
+
+let allProps=[],allWaitlist=[],selectedId=null,editingId=null,myCampus='',pendingPhotos=[],uploadedUrls=[],activeTab='browse';
+
+function fmt(d){if(!d)return'—';try{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'numeric'});}catch{return d;}}
+function sc(s){return s==='Available'?'b-avail':s==='Claimed'?'b-claimed':s==='Pending'?'b-pend':'b-wait';}
+function fld(r,k){return r.fields[k]||'';}
+
+async function uploadToCloudinary(file){
+  const ts=Math.round(Date.now()/1000);
+  const str=`timestamp=${ts}${CL_SECRET}`;
+  const msgBuf=new TextEncoder().encode(str);
+  const hashBuf=await crypto.subtle.digest('SHA-1',msgBuf);
+  const sig=Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const fd=new FormData();fd.append('file',file);fd.append('api_key',CL_KEY);fd.append('timestamp',ts);fd.append('signature',sig);
+  const res=await fetch(`https://api.cloudinary.com/v1_1/${CL_CLOUD}/image/upload`,{method:'POST',body:fd});
+  if(!res.ok)throw new Error('Photo upload failed');
+  return (await res.json()).secure_url;
+}
+
+async function loadAll(){
+  document.getElementById('grid').innerHTML='<div class="loading-state"><div class="spinner"></div><p>Loading props…</p></div>';
+  document.getElementById('err-banner').style.display='none';
+  try{
+    // Load props
+    let records=[],offset=null;
+    do{const url=offset?`${AT_API}/Props?offset=${offset}`:`${AT_API}/Props`;const res=await fetch(url,{headers:AT_HDR});if(!res.ok)throw new Error(`${res.status}`);const data=await res.json();records=[...records,...data.records];offset=data.offset||null;}while(offset);
+    allProps=records.map(r=>({id:r.id,name:fld(r,'Name'),desc:fld(r,'Description'),campus:fld(r,'Campus'),theme:fld(r,'Theme'),dims:fld(r,'Dimensions'),cond:fld(r,'Condition'),from:fld(r,'Available From'),to:fld(r,'Available Until'),pickup:fld(r,'Pick Up By'),status:fld(r,'Status')||'Available',contactName:fld(r,'Contact Name'),contactEmail:fld(r,'Contact Email'),contactPhone:fld(r,'Contact Phone'),notes:fld(r,'Notes'),photos:[...(r.fields['Photos']||[]).map(p=>p.url),...((r.fields['Photo URLs']||'').split('\n').filter(Boolean))],reqName:fld(r,'Requested By Name'),reqCampus:fld(r,'Requested By Campus'),reqEmail:fld(r,'Requested By Email'),reqPhone:fld(r,'Requested By Phone'),reqDate:fld(r,'Request Dates'),reqMsg:fld(r,'Request Message'),approvedCampus:fld(r,'Approved By Campus'),approvedEmail:fld(r,'Approved By Email')}));
+    // Load waitlist
+    let wrecords=[],woffset=null;
+    do{const url=woffset?`${AT_API}/Waitlist?offset=${woffset}`:`${AT_API}/Waitlist`;const res=await fetch(url,{headers:AT_HDR});if(!res.ok)throw new Error(`${res.status}`);const data=await res.json();wrecords=[...wrecords,...data.records];woffset=data.offset||null;}while(woffset);
+    allWaitlist=wrecords.map(r=>({id:r.id,propId:fld(r,'Prop ID'),propName:fld(r,'Prop Name'),campus:fld(r,'Campus'),name:fld(r,'Name'),email:fld(r,'Email'),phone:fld(r,'Phone'),date:fld(r,'Pick Up Date'),message:fld(r,'Message'),status:fld(r,'Status')||'Waiting'}));
+    renderCards();if(activeTab==='mine')renderMine();
+  }catch(e){
+    const b=document.getElementById('err-banner');b.textContent='Could not connect to Airtable ('+e.message+'). Check your connection and try refreshing.';b.style.display='block';
+    document.getElementById('grid').innerHTML='<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-wifi-off"></i><p>Could not load props</p></div>';
+  }
+}
+
+function waitlistCount(propId){return allWaitlist.filter(w=>w.propId===propId&&w.status==='Waiting').length;}
+
+function cardHTML(p,showEdit=false){
+  const wc=waitlistCount(p.id);
+  const thumb=p.photos&&p.photos.length?`<img src="${p.photos[0]}" alt="${p.name}">`:`<span>🎬</span>`;
+  const photoCount=p.photos&&p.photos.length>1?`<span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:8px"><i class="ti ti-photo" style="font-size:11px;vertical-align:-1px;margin-right:3px"></i>${p.photos.length}</span>`:'';
+  const waitBadge=wc>0&&p.status==='Pending'?`<span style="position:absolute;bottom:8px;right:8px;background:rgba(55,48,163,0.85);color:#fff;font-size:11px;padding:2px 7px;border-radius:8px"><i class="ti ti-clock" style="font-size:11px;vertical-align:-1px;margin-right:2px"></i>${wc} waiting</span>`:'';
+  const editBtn=showEdit?`<button class="edit-btn" onclick="event.stopPropagation();openEdit('${p.id}')"><i class="ti ti-pencil" style="font-size:11px"></i> Edit</button>`:'';
+  const approveBtn=showEdit&&p.status==='Pending'?`<button class="edit-btn" style="color:#0F6E56;background:none;border:none;cursor:pointer;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px" onclick="event.stopPropagation();openApprove('${p.id}')"><i class="ti ti-checks" style="font-size:11px"></i> Review</button>`:'';
+  return`<div class="card" onclick="openDetail('${p.id}')">
+    <div class="card-thumb">${thumb}<span class="badge abs-badge ${sc(p.status)}">${p.status}</span>${photoCount}${waitBadge}</div>
+    <div class="card-body">
+      <div class="card-name">${p.name||'Untitled prop'}</div>
+      <div class="card-campus"><i class="ti ti-map-pin" style="font-size:12px"></i>${p.campus||'—'}</div>
+      ${p.desc?`<div class="card-desc">${p.desc}</div>`:''}
+      <div class="card-chips">${p.theme?`<span class="chip-blue">${p.theme}</span>`:''}<span class="chip">${p.cond||'—'}</span>${p.dims?`<span class="chip">${p.dims}</span>`:''}</div>
+      <div class="card-foot"><span style="font-size:11px;color:var(--cs)">${p.pickup?'Pick up by '+fmt(p.pickup):'—'}</span><div class="card-actions">${approveBtn}${editBtn}<button class="btn-ghost-dark" style="font-size:12px;color:var(--atm-blue);font-weight:500;padding:2px 4px" onclick="event.stopPropagation();openDetail('${p.id}')">Details →</button></div></div>
+    </div>
+  </div>`;
+}
+
+function renderCards(){
+  const q=document.getElementById('q').value.toLowerCase();const st=document.getElementById('fStatus').value;const ca=document.getElementById('fCampus').value;
+  // Hide claimed props from Browse
+  const filtered=allProps.filter(p=>{
+    if(p.status==='Claimed')return false;
+    if(q&&![p.name,p.theme,p.campus,p.desc,p.notes].join(' ').toLowerCase().includes(q))return false;
+    if(st&&p.status!==st)return false;
+    if(ca&&p.campus!==ca)return false;
+    return true;
+  });
+  const avail=filtered.filter(p=>p.status==='Available').length;
+  document.getElementById('stats').innerHTML=`<div class="stat"><strong>${filtered.length}</strong> prop${filtered.length!==1?'s':''}</div><div class="stat"><strong>${avail}</strong> available</div><div class="stat"><strong>${allProps.filter(p=>p.status==='Pending').length}</strong> pending</div>`;
+  document.getElementById('grid').innerHTML=filtered.length?filtered.map(p=>cardHTML(p,false)).join(''):`<div class="empty-state"><i class="ti ti-search"></i><p>${allProps.filter(p=>p.status!=='Claimed').length===0?'No props listed yet — be the first!':'No props match your search'}</p></div>`;
+}
+
+function renderMine(){
+  const g=document.getElementById('mine-grid');
+  if(!myCampus){g.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-map-pin"></i><p>Select your campus above</p></div>`;document.getElementById('mine-stats').innerHTML='';return;}
+  const mine=allProps.filter(p=>p.campus===myCampus);
+  document.getElementById('mine-stats').innerHTML=`<div class="stat"><strong>${mine.length}</strong> listing${mine.length!==1?'s':''} from ${myCampus}</div><div class="stat"><strong>${mine.filter(p=>p.status==='Available').length}</strong> available</div><div class="stat"><strong>${mine.filter(p=>p.status==='Pending').length}</strong> pending approval</div>`;
+  g.innerHTML=mine.length?mine.map(p=>cardHTML(p,true)).join(''):`<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-building-store"></i><p>No listings from ${myCampus} yet</p></div>`;
+}
+
+function setMyCampus(v){myCampus=v;if(v){const s=document.getElementById('s-campus');if(s)s.value=v;}renderMine();}
+function switchTab(t){activeTab=t;document.getElementById('view-browse').style.display=t==='browse'?'block':'none';document.getElementById('view-mine').style.display=t==='mine'?'block':'none';document.getElementById('tab-browse').className='tab'+(t==='browse'?' active':'');document.getElementById('tab-mine').className='tab'+(t==='mine'?' active':'');if(t==='mine')renderMine();}
+
+function openDetail(id){
+  const p=allProps.find(x=>x.id===id);if(!p)return;selectedId=id;
+  document.getElementById('d-name').textContent=p.name||'Prop details';
+  const hero=document.getElementById('d-hero');hero.innerHTML=p.photos&&p.photos.length?`<img src="${p.photos[0]}" alt="${p.name}">`:'<span style="font-size:72px">🎬</span>';
+  const dp=document.getElementById('d-photos');if(p.photos&&p.photos.length>1){dp.style.display='grid';dp.innerHTML=p.photos.map((src,i)=>`<img src="${src}" alt="Photo ${i+1}" onclick="document.getElementById('d-hero').innerHTML='<img src=\\'${src}\\' alt=\\'prop\\' style=\\'width:100%;height:100%;object-fit:cover\\'>'"`).join('');}else{dp.style.display='none';dp.innerHTML='';}
+  document.getElementById('d-desc').textContent=p.desc||'No description provided.';
+  document.getElementById('d-campus').textContent=p.campus||'—';document.getElementById('d-theme').textContent=p.theme||'—';document.getElementById('d-dims').textContent=p.dims||'—';document.getElementById('d-cond').textContent=p.cond||'—';document.getElementById('d-status').innerHTML=`<span class="badge ${sc(p.status)}">${p.status}</span>`;document.getElementById('d-contact').innerHTML=`${p.contactName||'—'}<br>${p.contactEmail||''}<br>${p.contactPhone||''}`;document.getElementById('d-notes').textContent=p.notes||'None.';
+  const reqBtn=document.getElementById('d-req-btn');const waitBtn=document.getElementById('d-wait-btn');
+  if(p.status==='Available'){reqBtn.style.display='';reqBtn.disabled=false;reqBtn.textContent='Request this prop';waitBtn.style.display='none';}
+  else if(p.status==='Pending'){reqBtn.style.display='none';waitBtn.style.display='';const wc=waitlistCount(p.id);waitBtn.innerHTML=`<i class="ti ti-clock"></i> Join waitlist${wc>0?' ('+wc+' waiting)':''}`;}
+  else{reqBtn.style.display='';reqBtn.disabled=true;reqBtn.textContent='Already claimed';waitBtn.style.display='none';}
+  openModal('ov-detail');
+}
+
+function openApprove(id){
+  const p=allProps.find(x=>x.id===id);if(!p)return;selectedId=id;
+  document.getElementById('ap-prop-name').textContent=p.name;
+  const wlist=allWaitlist.filter(w=>w.propId===id&&w.status==='Waiting');
+  let html='';
+  // Current request
+  if(p.reqName||p.reqCampus){
+    html+=`<div style="margin-bottom:1.25rem">
+      <div style="font-size:12px;font-weight:600;color:var(--cs);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Current Request</div>
+      <div class="request-card">
+        <div class="request-card-header">
+          <div><div class="request-card-name">${p.reqName||'—'}</div><div class="request-card-campus">${p.reqCampus||'—'}</div></div>
+          <span class="badge b-pend">Pending</span>
+        </div>
+        <div class="request-detail"><strong>Email</strong>${p.reqEmail||'—'}</div>
+        <div class="request-detail"><strong>Phone</strong>${p.reqPhone||'—'}</div>
+        <div class="request-detail"><strong>Pick up</strong>${p.reqDate||'—'}</div>
+        ${p.reqMsg?`<div class="request-detail"><strong>Message</strong>${p.reqMsg}</div>`:''}
+        <div class="request-card-actions">
+          <button class="btn btn-green btn" style="font-size:13px;padding:7px 14px" onclick="approveRequest('${id}')"><i class="ti ti-check"></i> Approve</button>
+          <button class="btn btn-red btn" style="font-size:13px;padding:7px 14px" onclick="declineRequest('${id}')"><i class="ti ti-x"></i> Decline</button>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    html+=`<div class="section-note" style="margin-bottom:1.25rem"><i class="ti ti-info-circle" style="font-size:16px;flex-shrink:0"></i><span>No active request yet — status is Pending but no requester info found.</span></div>`;
+  }
+  // Waitlist
+  if(wlist.length>0){
+    html+=`<div><div style="font-size:12px;font-weight:600;color:var(--cs);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Waitlist (${wlist.length})</div>`;
+    wlist.forEach(w=>{
+      html+=`<div class="request-card">
+        <div class="request-card-header"><div><div class="request-card-name">${w.name||'—'}</div><div class="request-card-campus">${w.campus||'—'}</div></div><span class="badge b-wait">Waiting</span></div>
+        <div class="request-detail"><strong>Email</strong>${w.email||'—'}</div>
+        <div class="request-detail"><strong>Phone</strong>${w.phone||'—'}</div>
+        <div class="request-detail"><strong>Pick up</strong>${fmt(w.date)}</div>
+        ${w.message?`<div class="request-detail"><strong>Message</strong>${w.message}</div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  } else {
+    html+=`<div class="section-note"><i class="ti ti-clock" style="font-size:16px;flex-shrink:0"></i><span>No one on the waitlist yet.</span></div>`;
+  }
+  document.getElementById('ap-content').innerHTML=html;
+  openModal('ov-approve');
+}
+
+async function approveRequest(propId){
+  const p=allProps.find(x=>x.id===propId);if(!p)return;
+  if(!confirm(`Approve ${p.reqName} from ${p.reqCampus}? This will mark the prop as Claimed and hide it from Browse.`))return;
+  try{
+    await fetch(`${AT_API}/Props/${propId}`,{method:'PATCH',headers:AT_HDR,body:JSON.stringify({fields:{'Status':'Claimed','Approved By Campus':p.reqCampus,'Approved By Email':p.reqEmail}})});
+    // Mark waitlist entries as Notified
+    const wlist=allWaitlist.filter(w=>w.propId===propId&&w.status==='Waiting');
+    for(const w of wlist){await fetch(`${AT_API}/Waitlist/${w.id}`,{method:'PATCH',headers:AT_HDR,body:JSON.stringify({fields:{'Status':'Notified'}})});}
+    closeModal('ov-approve');toast('Request approved! Prop is now claimed and hidden from Browse.');await loadAll();
+  }catch(e){toast('Error: '+e.message);}
+}
+
+async function declineRequest(propId){
+  const p=allProps.find(x=>x.id===propId);if(!p)return;
+  if(!confirm(`Decline ${p.reqName||'this request'}? The prop will go back to Available.`))return;
+  try{
+    await fetch(`${AT_API}/Props/${propId}`,{method:'PATCH',headers:AT_HDR,body:JSON.stringify({fields:{'Status':'Available','Requested By Name':'','Requested By Campus':'','Requested By Email':'','Requested By Phone':'','Request Dates':'','Request Message':''}})});
+    closeModal('ov-approve');toast('Request declined. Prop is back to Available.');await loadAll();
+  }catch(e){toast('Error: '+e.message);}
+}
+
+function openRequest(){closeModal('ov-detail');openModal('ov-request');}
+function openWaitlist(){closeModal('ov-detail');openModal('ov-waitlist');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function maybeClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+
+async function handlePhotos(e){
+  const files=Array.from(e.target.files);const remaining=10-pendingPhotos.length-uploadedUrls.length;
+  const toProcess=files.slice(0,remaining);if(files.length>remaining)toast(`Max 10 photos.`);
+  for(const file of toProcess){if(file.size>5*1024*1024){toast(file.name+' over 5MB.');continue;}const reader=new FileReader();await new Promise(res=>{reader.onload=ev=>{pendingPhotos.push({data:ev.target.result,file,name:file.name});res();};reader.readAsDataURL(file);});}
+  refreshPhotoGrid();e.target.value='';
+}
+
+function refreshPhotoGrid(){
+  const pg=document.getElementById('photo-grid'),uz=document.getElementById('upload-zone');
+  const all=[...uploadedUrls.map(u=>({data:u,uploaded:true})),...pendingPhotos];
+  if(!all.length){pg.style.display='none';uz.style.display='block';return;}
+  pg.style.display='grid';
+  pg.innerHTML=all.map((p,i)=>`<div class="photo-thumb"><img src="${p.data}" alt="Photo ${i+1}"><button class="rm" onclick="removePhoto(${i},${p.uploaded?'true':'false'})"><i class="ti ti-x" style="font-size:10px"></i></button></div>`).join('');
+  if(all.length<10)pg.innerHTML+=`<div class="photo-thumb" style="background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:0.5px dashed var(--bd2)" onclick="document.getElementById('photo-input').click()"><i class="ti ti-plus" style="font-size:20px;color:var(--cs)"></i></div>`;
+  uz.style.display='none';
+}
+
+function removePhoto(i,uploaded){if(uploaded){uploadedUrls.splice(i,1);}else{pendingPhotos.splice(i-uploadedUrls.length,1);}refreshPhotoGrid();}
+
+function openSubmitNew(){
+  editingId=null;
+  document.getElementById('submit-title').textContent='List a prop';document.getElementById('submit-icon').className='ti ti-plus';document.getElementById('submit-btn-label').textContent='Submit listing';
+  ['s-name','s-desc','s-theme','s-dims','s-pickup','s-cname','s-cemail','s-cphone','s-notes'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('s-campus').value=myCampus||'';document.getElementById('s-cond').value='';document.getElementById('s-status').value='Available';
+  pendingPhotos=[];uploadedUrls=[];refreshPhotoGrid();openModal('ov-submit');
+}
+
+function openEdit(id){
+  const p=allProps.find(x=>x.id===id);if(!p)return;editingId=id;
+  document.getElementById('submit-title').textContent='Edit prop';document.getElementById('submit-icon').className='ti ti-pencil';document.getElementById('submit-btn-label').textContent='Save changes';
+  document.getElementById('s-name').value=p.name||'';document.getElementById('s-desc').value=p.desc||'';document.getElementById('s-campus').value=p.campus||'';document.getElementById('s-theme').value=p.theme||'';document.getElementById('s-dims').value=p.dims||'';document.getElementById('s-cond').value=p.cond||'';document.getElementById('s-pickup').value=p.pickup||'';document.getElementById('s-status').value=p.status||'Available';document.getElementById('s-cname').value=p.contactName||'';document.getElementById('s-cemail').value=p.contactEmail||'';document.getElementById('s-cphone').value=p.contactPhone||'';document.getElementById('s-notes').value=p.notes||'';
+  pendingPhotos=[];uploadedUrls=[];refreshPhotoGrid();openModal('ov-submit');
+}
+
+async function saveProp(){
+  const name=document.getElementById('s-name').value.trim();const campus=document.getElementById('s-campus').value;const cname=document.getElementById('s-cname').value.trim();const cemail=document.getElementById('s-cemail').value.trim();
+  if(!name||!campus||!cname||!cemail){toast('Please fill in name, campus, contact name and email.');return;}
+  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Saving…';
+  try{
+    let photoUrls=[...uploadedUrls];
+    if(pendingPhotos.length>0){document.getElementById('upload-progress').style.display='block';for(const p of pendingPhotos){try{const url=await uploadToCloudinary(p.file);photoUrls.push(url);}catch(e){toast('Could not upload '+p.name);}}document.getElementById('upload-progress').style.display='none';}
+    const fields={'Name':name,'Description':document.getElementById('s-desc').value.trim(),'Campus':campus,'Theme':document.getElementById('s-theme').value.trim(),'Dimensions':document.getElementById('s-dims').value.trim(),'Condition':document.getElementById('s-cond').value,'Status':document.getElementById('s-status').value||'Available','Contact Name':cname,'Contact Email':cemail,'Contact Phone':document.getElementById('s-cphone').value.trim(),'Notes':document.getElementById('s-notes').value.trim()};
+    const pickupVal=document.getElementById('s-pickup').value;
+    if(pickupVal)fields['Pick Up By']=pickupVal;
+    if(photoUrls.length>0)fields['Photo URLs']=photoUrls.join('\n');
+    Object.keys(fields).forEach(k=>{if(fields[k]===''||fields[k]===null||fields[k]===undefined)delete fields[k];});
+    const res=editingId?await fetch(`${AT_API}/Props/${editingId}`,{method:'PATCH',headers:AT_HDR,body:JSON.stringify({fields})}):await fetch(`${AT_API}/Props`,{method:'POST',headers:AT_HDR,body:JSON.stringify({fields})});
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||'Save failed');}
+    closeModal('ov-submit');myCampus=campus;document.getElementById('myCampusSel').value=campus;
+    toast(editingId?'Prop updated!':'Prop listed!');editingId=null;await loadAll();
+  }catch(e){toast('Error: '+e.message);}
+  finally{btn.disabled=false;btn.innerHTML=`<i class="ti ti-check"></i> <span id="submit-btn-label">${editingId?'Save changes':'Submit listing'}</span>`;}
+}
+
+async function submitRequest(){
+  const campus=document.getElementById('r-campus').value;const name=document.getElementById('r-name').value.trim();const email=document.getElementById('r-email').value.trim();
+  if(!campus||!name||!email){toast('Please fill in your campus, name and email.');return;}
+  const btn=document.getElementById('request-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Sending…';
+  try{
+    const date=document.getElementById('r-from').value;
+    const res=await fetch(`${AT_API}/Props/${selectedId}`,{method:'PATCH',headers:AT_HDR,body:JSON.stringify({fields:{'Status':'Pending','Requested By Campus':campus,'Requested By Name':name,'Requested By Email':email,'Requested By Phone':document.getElementById('r-phone').value.trim(),'Request Dates':date?fmt(date):'','Request Message':document.getElementById('r-notes').value.trim()}})});
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||'Request failed');}
+    closeModal('ov-request');['r-name','r-email','r-phone','r-from','r-notes'].forEach(i=>document.getElementById(i).value='');document.getElementById('r-campus').value='';
+    toast('Request sent! The listing campus will be notified.');await loadAll();
+  }catch(e){toast('Error: '+e.message);}
+  finally{btn.disabled=false;btn.innerHTML='<i class="ti ti-send"></i> Send request';}
+}
+
+async function submitWaitlist(){
+  const campus=document.getElementById('w-campus').value;const name=document.getElementById('w-name').value.trim();const email=document.getElementById('w-email').value.trim();
+  if(!campus||!name||!email){toast('Please fill in your campus, name and email.');return;}
+  const btn=document.getElementById('waitlist-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Joining…';
+  try{
+    const p=allProps.find(x=>x.id===selectedId);
+    const fields={'Prop ID':selectedId,'Prop Name':p?p.name:'','Campus':campus,'Name':name,'Email':email,'Phone':document.getElementById('w-phone').value.trim(),'Message':document.getElementById('w-notes').value.trim(),'Status':'Waiting'};
+    const dateVal=document.getElementById('w-date').value;if(dateVal)fields['Pick Up Date']=dateVal;
+    const res=await fetch(`${AT_API}/Waitlist`,{method:'POST',headers:AT_HDR,body:JSON.stringify({fields})});
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||'Failed');}
+    closeModal('ov-waitlist');['w-name','w-email','w-phone','w-date','w-notes'].forEach(i=>document.getElementById(i).value='');document.getElementById('w-campus').value='';
+    toast("You're on the waitlist! We'll notify you if it becomes available.");await loadAll();
+  }catch(e){toast('Error: '+e.message);}
+  finally{btn.disabled=false;btn.innerHTML='<i class="ti ti-clock"></i> Join waitlist';}
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+
+function init(){
+  ['fCampus','s-campus','r-campus','w-campus','myCampusSel'].forEach(id=>{const el=document.getElementById(id);const ph=id==='fCampus'?'All campuses':id==='myCampusSel'?'Select my campus…':'Select campus';el.innerHTML=`<option value="">${ph}</option>`+CAMPUSES.map(c=>`<option>${c}</option>`).join('');});
+  loadAll();
+}
+init();
+// Handle campus URL param after page loads
+window.addEventListener('load', function(){
+  const params=new URLSearchParams(window.location.search);
+  const campusParam=params.get('campus');
+  if(!campusParam)return;
+  const match=CAMPUSES.find(c=>c.toLowerCase()===campusParam.toLowerCase());
+  if(!match)return;
+  // Wait 3 seconds for data to load then switch
+  setTimeout(()=>{
+    myCampus=match;
+    document.getElementById('myCampusSel').value=match;
+    document.getElementById('s-campus').value=match;
+    switchTab('mine');
+    renderMine();
+  },3000);
+});
+</script>
+</body>
+</html>
